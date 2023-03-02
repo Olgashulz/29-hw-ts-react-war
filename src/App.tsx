@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import Start from "./components/Start";
+import Game from "./components/Game";
+import Result from "./components/Result";
+import {game, result} from "./utils/constants";
+import {GameResult} from "./utils/types";
 
-function App() {
+const App = () => {
+  const [page, setPage] = useState('start');
+  const [name, setName] = useState('');
+  const [gameResults, setGameResults] = useState<GameResult[]>([]);
+
+  const handleGameResults = (results: GameResult[]) => {
+    setGameResults(results);
+    setPage(result);
+  }
+
+  const handleNameChange = (name: string) => {
+    setName(name);
+    setPage(game);
+  }
+
+  let pageContent;
+
+  switch (page) {
+    case 'start':
+      pageContent = <Start changePage={setPage} changeName={handleNameChange}/>;
+      break;
+    case 'game':
+      pageContent = <Game name={name} changePage={setPage} setGameResults={handleGameResults}/>;
+      break;
+    case 'result':
+      pageContent =
+          <Result changePage={setPage} name={name} results={gameResults} setGameResults={handleGameResults}/>;
+      break;
+    default:
+      pageContent = <Start changePage={setPage} changeName={handleNameChange}/>;
+      break;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className='App'>
+        {pageContent}
+      </div>
   );
-}
+};
 
 export default App;
